@@ -6,6 +6,8 @@ using TMPro;
 using System.Collections;
 public class PictureGuessGame : MonoBehaviour
 {
+    //teimo how did you do this w/o a single comment holy shit
+    
     [Header("UI Refs")]
     [SerializeField] private Image pictureImage;
     [SerializeField] private Transform slotsParent;                 
