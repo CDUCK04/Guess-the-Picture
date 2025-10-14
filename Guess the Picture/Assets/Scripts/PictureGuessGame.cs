@@ -7,7 +7,6 @@ using System.Collections;
 public class PictureGuessGame : MonoBehaviour
 {
     //teimo how did you do this w/o a single comment holy shit
-    
     [Header("UI Refs")]
     [SerializeField] private Image pictureImage;
     [SerializeField] private Transform slotsParent;                 
@@ -28,7 +27,7 @@ public class PictureGuessGame : MonoBehaviour
 
     [Header("Config")]
     [SerializeField] private int totalLetterButtons = 20;
-    [SerializeField] private int totalRounds = 3;        
+    [SerializeField] private int totalRounds = MainMenu.NumOfRounds;        
     [SerializeField] private int roundTimeSeconds = 25;
     [SerializeField] private int maxRoundPoints = 200;
     [SerializeField] private int penaltyStartAt = 20;    
@@ -56,6 +55,8 @@ public class PictureGuessGame : MonoBehaviour
 
     void Start()
     {
+        totalRounds = MainMenu.NumOfRounds;
+
         if (letterSpots == null || letterSpots.Count == 0)
             Debug.LogWarning("Letter spots list is empty. Drag your 20 blank blocks into 'letterSpots'.");
 
