@@ -6,31 +6,40 @@ using TMPro;
 using System.Collections;
 public class PictureGuessGame : MonoBehaviour
 {
+    [SerializeField] private SpriteScoreDisplay spriteScoreDisplay;
+    [SerializeField] private SpriteScoreDisplay spriteTimerDisplay;
+
+    [SerializeField] private SpriteScoreDisplay spriteCurrentRoundDisplay;
+    [SerializeField] private SpriteScoreDisplay spriteTotalRoundsDisplay;
+
+    [SerializeField] private GameObject restartMenu;
+
+
     //teimo how did you do this w/o a single comment holy shit
     [Header("UI Refs")]
     [SerializeField] private Image pictureImage;
-    [SerializeField] private Transform slotsParent;                 
+    [SerializeField] private Transform slotsParent;
     [SerializeField] private TMP_Text statusText;
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text timerText;
 
     [Header("Prefabs & Folders")]
-    [SerializeField] private GameObject slotPrefab;                
-    [SerializeField] private string picturesFolder = "Pictures";    
-    [SerializeField] private string lettersFolder = "Placeholder Prefabs/Letters"; 
+    [SerializeField] private GameObject slotPrefab;
+    [SerializeField] private string picturesFolder = "Pictures";
+    [SerializeField] private string lettersFolder = "Placeholder Prefabs/Letters";
 
     [Header("Provided Cover Blocks (drag all 25 here)")]
-    [SerializeField] private List<GameObject> coverBlocks = new(); 
+    [SerializeField] private List<GameObject> coverBlocks = new();
 
     [Header("Provided Letter Spots (drag all 20 here)")]
     [SerializeField] private List<RectTransform> letterSpots = new();
 
     [Header("Config")]
     [SerializeField] private int totalLetterButtons = 20;
-    [SerializeField] private int totalRounds = MainMenu.NumOfRounds;        
+    [SerializeField] private int totalRounds = MainMenu.NumOfRounds;
     [SerializeField] private int roundTimeSeconds = 25;
     [SerializeField] private int maxRoundPoints = 200;
-    [SerializeField] private int penaltyStartAt = 20;    
+    [SerializeField] private int penaltyStartAt = 20;
     [SerializeField] private int penaltyPerSec = 10;
 
     private readonly Dictionary<Button, RectTransform> buttonHomeSpot = new();
@@ -43,10 +52,10 @@ public class PictureGuessGame : MonoBehaviour
     private int currentRoundIndex = 0;
 
     private Sprite currentSprite;
-    private string currentAnswer; 
+    private string currentAnswer;
 
-    private readonly List<AnswerSlot> slots = new();    
-    private readonly List<Button> letterButtons = new();  
+    private readonly List<AnswerSlot> slots = new();
+    private readonly List<Button> letterButtons = new();
 
     private int score = 0;
     private float timer;
@@ -55,6 +64,8 @@ public class PictureGuessGame : MonoBehaviour
 
     void Start()
     {
+        restartMenu.SetActive(false);
+
         totalRounds = MainMenu.NumOfRounds;
 
         if (letterSpots == null || letterSpots.Count == 0)
@@ -84,7 +95,12 @@ public class PictureGuessGame : MonoBehaviour
         if (!roundActive) return;
 
         timer -= Time.deltaTime;
-        if (timerText) timerText.text = ("TIME:"+Mathf.CeilToInt(Mathf.Max(timer, 0)).ToString());
+        int timeLeft = Mathf.CeilToInt(Mathf.Max(timer, 0));
+
+        if (spriteTimerDisplay != null)
+            spriteTimerDisplay.SetDisplay(timeLeft.ToString());
+        else if (timerText)
+            timerText.text = timeLeft.ToString();
 
         coverTickAccumulator += Time.deltaTime;
         while (coverTickAccumulator >= 1f)
@@ -95,7 +111,7 @@ public class PictureGuessGame : MonoBehaviour
 
         if (timer <= 0f)
         {
-           
+
             SetStatus("TIME'S UP!");
             StartCoroutine(RevealAndProceed(fillAnswer: true));
         }
@@ -107,7 +123,10 @@ public class PictureGuessGame : MonoBehaviour
 
         if (currentRoundIndex >= pictureOrder.Count)
         {
-            SetStatus($"Finished! Score: {score}");
+            SetStatus($"Finished! Total Score: {score}");
+
+            restartMenu.SetActive(true);
+            restartMenu.GetComponent<RestartMenu>().ShowRestartMenu();
             return;
         }
 
@@ -147,7 +166,12 @@ public class PictureGuessGame : MonoBehaviour
         coverTickAccumulator = 0f;
         roundActive = true;
 
-        SetStatus($"Round {currentRoundIndex + 1}/{pictureOrder.Count}");
+        SetStatus("What Could The Image Possibly Be?");
+        if (spriteCurrentRoundDisplay != null)
+            spriteCurrentRoundDisplay.SetDisplay((currentRoundIndex + 1).ToString());
+        if (spriteTotalRoundsDisplay != null)
+            spriteTotalRoundsDisplay.SetDisplay(pictureOrder.Count.ToString());
+
     }
 
     private void SpawnLettersOntoSpots()
@@ -201,7 +225,7 @@ public class PictureGuessGame : MonoBehaviour
             {
                 ReturnButtonToHome(s.PlacedButton);
                 s.ClearPlaced();
-                SetStatus(""); 
+                SetStatus("");
                 break;
             }
         }
@@ -346,12 +370,15 @@ public class PictureGuessGame : MonoBehaviour
 
     private void UpdateScoreUI()
     {
-        if (scoreText) scoreText.text = $"Score: {score}";
+        if (spriteScoreDisplay != null)
+            spriteScoreDisplay.SetDisplay(score.ToString());
+        else if (scoreText)
+            scoreText.text = $"{score}";
     }
 
     private List<char> BuildShuffledLetterPool(string answer, int poolSize)
     {
-        var pool = new List<char>(answer); 
+        var pool = new List<char>(answer);
         while (pool.Count < poolSize)
             pool.Add(Alphabet[rng.Next(Alphabet.Length)]);
 
@@ -397,13 +424,13 @@ public class PictureGuessGame : MonoBehaviour
 
     private IEnumerator RevealAndProceed(bool fillAnswer)
     {
-        roundActive = false;            
-        RevealAllCovers();          
+        roundActive = false;
+        RevealAllCovers();
         if (fillAnswer) FillAnswerWithCorrectLetters();
 
         foreach (var b in letterButtons) if (b) b.interactable = false;
 
-        yield return new WaitForSeconds(2.5f); 
+        yield return new WaitForSeconds(2.5f);
         ProceedNextRound();
     }
 }

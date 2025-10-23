@@ -7,7 +7,10 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     [SerializeField]
-    private GameObject titleText, numRoundsText;
+    private SpriteScoreDisplay roundNumDisplay;
+
+    [SerializeField]
+    private GameObject titleText, numRoundsImage;
 
     [SerializeField]
     private GameObject startButton, quitButton, backButton, beginGame;
@@ -22,11 +25,12 @@ public class MainMenu : MonoBehaviour
         titleText.SetActive(true);
         startButton.SetActive(true);
         quitButton.SetActive(true);
-        
+
         beginGame.SetActive(false);
-        numRoundsText.SetActive(false);
+        //numRoundsText.SetActive(false);
         numOfRoundsSlider.gameObject.SetActive(false);
         backButton.SetActive(false);
+        numRoundsImage.SetActive(false);
     }
 
     public void OnStartButtonPressed()
@@ -37,9 +41,11 @@ public class MainMenu : MonoBehaviour
         quitButton.SetActive(false);
 
         backButton.SetActive(true);
-        numRoundsText.SetActive(true);
+        //numRoundsText.SetActive(true);
+        numRoundsImage.SetActive(true);
         numOfRoundsSlider.gameObject.SetActive(true);
         beginGame.SetActive(true);
+        roundNumDisplay.SetDisplay("1");
     }
 
     public void OnQuitButtonPressed()
@@ -51,7 +57,7 @@ public class MainMenu : MonoBehaviour
     public void OnNumOfRoundsSliderChanged()
     {
         NumOfRounds = (int)numOfRoundsSlider.value;
-        numRoundsText.GetComponent<TMP_Text>().text = "Number of Rounds: " + NumOfRounds;
+        roundNumDisplay.SetDisplay(NumOfRounds.ToString());
     }
 
     public void OnNumOfRoundsSelected()
@@ -70,7 +76,8 @@ public class MainMenu : MonoBehaviour
         startButton.SetActive(true);
         quitButton.SetActive(true);
 
-        numRoundsText.SetActive(false);
+        numRoundsImage.SetActive(false);
+        //numRoundsText.SetActive(false);
         numOfRoundsSlider.gameObject.SetActive(false);
         beginGame.SetActive(false);
         backButton.SetActive(false);
