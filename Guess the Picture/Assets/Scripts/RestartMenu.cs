@@ -11,8 +11,6 @@ public class RestartMenu : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        startButton.SetActive(false);
-        backButton.SetActive(false);
         currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
     }
 

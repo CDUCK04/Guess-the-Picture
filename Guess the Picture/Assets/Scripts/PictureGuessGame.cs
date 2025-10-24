@@ -14,6 +14,8 @@ public class PictureGuessGame : MonoBehaviour
 
     [SerializeField] private GameObject restartMenu;
 
+    [SerializeField] private RestartMenu restartMenuComponent;
+
 
     //teimo how did you do this w/o a single comment holy shit
     [Header("UI Refs")]
@@ -126,7 +128,7 @@ public class PictureGuessGame : MonoBehaviour
             SetStatus($"Finished! Total Score: {score}");
 
             restartMenu.SetActive(true);
-            restartMenu.GetComponent<RestartMenu>().ShowRestartMenu();
+            restartMenuComponent.ShowRestartMenu();
             return;
         }
 
