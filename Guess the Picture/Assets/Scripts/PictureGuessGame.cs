@@ -168,7 +168,7 @@ public class PictureGuessGame : MonoBehaviour
         coverTickAccumulator = 0f;
         roundActive = true;
 
-        SetStatus("What Could The Image Possibly Be?");
+        SetStatus("Guess That Picture!");
         if (spriteCurrentRoundDisplay != null)
             spriteCurrentRoundDisplay.SetDisplay((currentRoundIndex + 1).ToString());
         if (spriteTotalRoundsDisplay != null)
