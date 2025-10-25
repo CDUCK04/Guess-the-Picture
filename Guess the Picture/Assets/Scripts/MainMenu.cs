@@ -45,7 +45,8 @@ public class MainMenu : MonoBehaviour
         numRoundsImage.SetActive(true);
         numOfRoundsSlider.gameObject.SetActive(true);
         beginGame.SetActive(true);
-        roundNumDisplay.SetDisplay("1");
+        NumOfRounds = (int)numOfRoundsSlider.value;
+        roundNumDisplay.SetDisplay(NumOfRounds.ToString());
     }
 
     public void OnQuitButtonPressed()
