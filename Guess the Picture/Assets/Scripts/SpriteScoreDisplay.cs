@@ -9,18 +9,14 @@ public class SpriteScoreDisplay : MonoBehaviour
 
     public void SetDisplay(string toDisplay)
     {
+        // Pad with leading zeros to match total digits
+        toDisplay = toDisplay.PadLeft(digitImages.Count, '0');
+
         for (int i = 0; i < digitImages.Count; i++)
         {
-            if (i < toDisplay.Length)
-            {
-                int num = toDisplay[toDisplay.Length - 1 - i] - '0';
-                digitImages[digitImages.Count - 1 - i].sprite = numberSprites[num];
-                digitImages[digitImages.Count - 1 - i].enabled = true;
-            }
-            else
-            {
-                digitImages[digitImages.Count - 1 - i].enabled = false;
-            }
+            int num = toDisplay[i] - '0';
+            digitImages[i].sprite = numberSprites[num];
+            digitImages[i].enabled = true; // always visible now
         }
     }
 }

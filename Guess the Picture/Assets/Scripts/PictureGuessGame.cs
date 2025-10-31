@@ -16,6 +16,21 @@ public class PictureGuessGame : MonoBehaviour
 
     [SerializeField] private RestartMenu restartMenuComponent;
 
+    [Header("Sound Effects")]
+    [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioClip sfxClock1;
+    [SerializeField] private AudioClip sfxClock2;
+    [SerializeField] private AudioClip sfxBeep;         // menu button select
+    [SerializeField] private AudioClip sfxPop;          // letter select / backspace
+    [SerializeField] private AudioClip sfxCorrect;      // correct guess
+    [SerializeField] private AudioClip sfxIncorrect;    // wrong guess
+    [SerializeField] private AudioClip finaleMusic;
+
+    private void PlaySFX(AudioClip clip, float volume = (0.75f / 6.5f))
+    {
+        if (clip != null && sfxSource != null)
+            sfxSource.PlayOneShot(clip, volume);
+    }
 
     //teimo how did you do this w/o a single comment holy shit
     [Header("UI Refs")]
@@ -97,7 +112,13 @@ public class PictureGuessGame : MonoBehaviour
         if (!roundActive) return;
 
         timer -= Time.deltaTime;
+
+        int prevSecond = Mathf.CeilToInt(timer + Time.deltaTime);
         int timeLeft = Mathf.CeilToInt(Mathf.Max(timer, 0));
+
+        if (timeLeft < prevSecond) // just ticked down a second
+            if(timeLeft % 2  == 0) PlaySFX(sfxClock1);
+            else PlaySFX(sfxClock2);
 
         if (spriteTimerDisplay != null)
             spriteTimerDisplay.SetDisplay(timeLeft.ToString());
@@ -126,7 +147,9 @@ public class PictureGuessGame : MonoBehaviour
         if (currentRoundIndex >= pictureOrder.Count)
         {
             SetStatus($"Finished! Total Score: {score}");
-
+            
+            Destroy(transform.GetChild(0).gameObject); //stop the game music by just deleting it
+            PlaySFX(finaleMusic, 0.03f);
             restartMenu.SetActive(true);
             restartMenuComponent.ShowRestartMenu();
             return;
@@ -168,7 +191,7 @@ public class PictureGuessGame : MonoBehaviour
         coverTickAccumulator = 0f;
         roundActive = true;
 
-        SetStatus("What Could The Image Possibly Be?");
+        SetStatus("");
         if (spriteCurrentRoundDisplay != null)
             spriteCurrentRoundDisplay.SetDisplay((currentRoundIndex + 1).ToString());
         if (spriteTotalRoundsDisplay != null)
@@ -220,6 +243,7 @@ public class PictureGuessGame : MonoBehaviour
 
     public void Backspace()
     {
+        PlaySFX(sfxPop, (0.6f / 6.5f));
         for (int i = slots.Count - 1; i >= 0; i--)
         {
             var s = slots[i];
@@ -266,11 +290,14 @@ public class PictureGuessGame : MonoBehaviour
 
         PlaceButtonIntoSlot(btn, empty);
 
+        PlaySFX(sfxPop, (0.6f / 6.5f));
+
         if (slots.All(s => !s.IsEmpty))
         {
             string guess = new string(slots.Select(s => GetButtonLetter(s.PlacedButton)).ToArray());
             if (guess == currentAnswer)
             {
+                PlaySFX(sfxCorrect);
                 int tRem = Mathf.CeilToInt(Mathf.Clamp(timer, 0, roundTimeSeconds));
                 int points = CalculatePoints(tRem);
                 score += points;
@@ -281,6 +308,7 @@ public class PictureGuessGame : MonoBehaviour
             }
             else
             {
+                PlaySFX(sfxIncorrect);
                 SetStatus("Wrong. Auto-clearing...");
                 AutoClearSlots();
             }

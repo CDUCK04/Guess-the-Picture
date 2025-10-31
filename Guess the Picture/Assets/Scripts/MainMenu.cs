@@ -6,6 +6,14 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioClip sfxBeep;
+    private void PlaySFX(AudioClip clip, float volume = (0.6f / 8f))
+    {
+        if (clip != null && sfxSource != null)
+            sfxSource.PlayOneShot(clip, volume);
+    }
+
     [SerializeField]
     private SpriteScoreDisplay roundNumDisplay;
 
@@ -35,6 +43,7 @@ public class MainMenu : MonoBehaviour
 
     public void OnStartButtonPressed()
     {
+        PlaySFX(sfxBeep);
         // Load the num of rounds selection menu
         titleText.SetActive(false);
         startButton.SetActive(false);
@@ -45,17 +54,20 @@ public class MainMenu : MonoBehaviour
         numRoundsImage.SetActive(true);
         numOfRoundsSlider.gameObject.SetActive(true);
         beginGame.SetActive(true);
-        roundNumDisplay.SetDisplay("1");
+        NumOfRounds = (int)numOfRoundsSlider.value;
+        roundNumDisplay.SetDisplay(NumOfRounds.ToString());
     }
 
     public void OnQuitButtonPressed()
     {
+        PlaySFX(sfxBeep);
         Debug.Log("quit");
         Application.Quit();
     }
 
     public void OnNumOfRoundsSliderChanged()
     {
+        PlaySFX(sfxBeep);
         NumOfRounds = (int)numOfRoundsSlider.value;
         roundNumDisplay.SetDisplay(NumOfRounds.ToString());
     }
@@ -71,6 +83,7 @@ public class MainMenu : MonoBehaviour
 
     public void OnBackButtonPressed()
     {
+        PlaySFX(sfxBeep);
         // Return to the main menu
         titleText.SetActive(true);
         startButton.SetActive(true);
