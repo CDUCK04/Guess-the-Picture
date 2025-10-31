@@ -26,7 +26,7 @@ public class PictureGuessGame : MonoBehaviour
     [SerializeField] private AudioClip sfxIncorrect;    // wrong guess
     [SerializeField] private AudioClip finaleMusic;
 
-    private void PlaySFX(AudioClip clip, float volume = 1f)
+    private void PlaySFX(AudioClip clip, float volume = (0.75f / 6.5f))
     {
         if (clip != null && sfxSource != null)
             sfxSource.PlayOneShot(clip, volume);
@@ -149,7 +149,7 @@ public class PictureGuessGame : MonoBehaviour
             SetStatus($"Finished! Total Score: {score}");
             
             Destroy(transform.GetChild(0).gameObject); //stop the game music by just deleting it
-            PlaySFX(finaleMusic);
+            PlaySFX(finaleMusic, 0.03f);
             restartMenu.SetActive(true);
             restartMenuComponent.ShowRestartMenu();
             return;
@@ -243,7 +243,7 @@ public class PictureGuessGame : MonoBehaviour
 
     public void Backspace()
     {
-        PlaySFX(sfxPop, 1.5f);
+        PlaySFX(sfxPop, (0.6f / 6.5f));
         for (int i = slots.Count - 1; i >= 0; i--)
         {
             var s = slots[i];
@@ -290,7 +290,7 @@ public class PictureGuessGame : MonoBehaviour
 
         PlaceButtonIntoSlot(btn, empty);
 
-        PlaySFX(sfxPop, 1.5f);
+        PlaySFX(sfxPop, (0.6f / 6.5f));
 
         if (slots.All(s => !s.IsEmpty))
         {

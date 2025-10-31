@@ -8,7 +8,7 @@ public class MainMenu : MonoBehaviour
 {
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioClip sfxBeep;
-    private void PlaySFX(AudioClip clip, float volume = 1f)
+    private void PlaySFX(AudioClip clip, float volume = (0.6f / 8f))
     {
         if (clip != null && sfxSource != null)
             sfxSource.PlayOneShot(clip, volume);
@@ -43,7 +43,7 @@ public class MainMenu : MonoBehaviour
 
     public void OnStartButtonPressed()
     {
-        PlaySFX(sfxBeep, 1.5f);
+        PlaySFX(sfxBeep);
         // Load the num of rounds selection menu
         titleText.SetActive(false);
         startButton.SetActive(false);
@@ -60,14 +60,14 @@ public class MainMenu : MonoBehaviour
 
     public void OnQuitButtonPressed()
     {
-        PlaySFX(sfxBeep, 1.5f);
+        PlaySFX(sfxBeep);
         Debug.Log("quit");
         Application.Quit();
     }
 
     public void OnNumOfRoundsSliderChanged()
     {
-        PlaySFX(sfxBeep, 1.5f);
+        PlaySFX(sfxBeep);
         NumOfRounds = (int)numOfRoundsSlider.value;
         roundNumDisplay.SetDisplay(NumOfRounds.ToString());
     }
@@ -83,7 +83,7 @@ public class MainMenu : MonoBehaviour
 
     public void OnBackButtonPressed()
     {
-        PlaySFX(sfxBeep, 1.5f);
+        PlaySFX(sfxBeep);
         // Return to the main menu
         titleText.SetActive(true);
         startButton.SetActive(true);
